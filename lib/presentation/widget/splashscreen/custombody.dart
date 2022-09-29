@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/presentation/widget/splashscreen/custombtn.dart';
 import '../../../core/constant/colorapp.dart';
 import '../../../core/constant/image_assets.dart';
 import '../../../core/constant/textstyleapp.dart';
-import '../../screen/home.dart';
 
 class CustomBodySplashScreen extends StatelessWidget {
   const CustomBodySplashScreen({Key? key}) : super(key: key);
@@ -36,29 +36,10 @@ class CustomBodySplashScreen extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const Spacer(),
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            height: 70,
-            width: double.infinity,
-            child: MaterialButton(
-                textColor: AppColor.textColor,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25)),
-                color: AppColor.primaryColor,
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (builder) => const HomePage()));
-                },
-                child: Text(
-                  "Continue",
-                  style: AppTextStyle.mediumFont,
-                )),
-          ),
+          const CustomButtom(),
           const SizedBox(
-            height: 20,
-          )
+            height: 30,
+          ),
         ]);
   }
 }

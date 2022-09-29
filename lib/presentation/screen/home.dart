@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
-import 'package:myapp/core/constant/textstyleapp.dart';
-import 'package:myapp/presentation/widget/appBar/myappbar.dart';
+import 'package:myapp/data/models/countrycodemodel.dart';
+import 'package:myapp/presentation/widget/home/custom_dropdown_yaers.dart';
 import 'package:myapp/presentation/widget/home/custombackground.dart';
-import 'package:myapp/presentation/widget/home/customcard.dart';
+import 'package:myapp/presentation/widget/home/customcircle.dart';
 import 'package:myapp/presentation/widget/home/customtext.dart';
 import 'package:myapp/presentation/widget/home/dropdown.dart';
-
 import '../../business_logic/cubit/country_cubit.dart';
 import '../../core/constant/colorapp.dart';
 import '../../core/constant/image_assets.dart';
 import '../../data/models/countrymodel.dart';
+import '../widget/home/holidays.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -21,100 +21,106 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<String> list = <String>['One', 'Two', 'Three', 'Four'];
-  late List<CountryModel> allCountries;
-
+  late List<CountriesCodeModel> listOfCountriesCodeModel = [];
+  // String code = "0";
+  // String year = "0";
+  List<CountryModel> listOfCountryModel = [];
   @override
   void initState() {
     super.initState();
-    allCountries = BlocProvider.of<CountryCubit>(context).getCountryFromModel();
+    listOfCountriesCodeModel = BlocProvider.of<CountryCubit>(context)
+        .getCountryCodeFromModelFromCubit();
+    listOfCountryModel = BlocProvider.of<CountryCubit>(context).getList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.backgroundColor,
-      // appBar: myAppBar("Holidays App"),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        child: Stack(
-          children: [
-            const CustomBackground(),
-            Positioned(
-                top: -50,
-                right: -50,
-                child: Container(
-                  height: 260,
-                  width: 260,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(260),
-                    color: AppColor.backgroundColor.withOpacity(0.4),
-                  ),
-                )),
-            Center(
-              child: Container(
-                margin: const EdgeInsets.only(top: 50),
-                // color: AppColor.textColor.withOpacity(1),
-                height: MediaQuery.of(context).size.height,
-                child: Column(
-                  children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const CustomText(),
-                    Expanded(
-                        flex: 1,
-                        child: Row(
-                          children: [
-                            CustomDropDown(
-                              list: const ["Syria", "Lebanon"],
-                              title: "Chosse Country",
-                            ),
-                            CustomDropDown(
-                              list: const ['2000', '2001', '2002'],
-                              title: "Chosse Year",
-                            ),
-                          ],
-                        )),
-                    SizedBox(
-                        height: MediaQuery.of(context).size.height / 1.5,
-                        child: buildBlockWidget())
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+        backgroundColor: AppColor.backgroundColor, body: _buildHomeBody());
   }
 
-  buildBlockWidget() {
+  _buildDropDownList() {
     return BlocBuilder<CountryCubit, CountryState>(builder: (context, state) {
-      if (state is CountryLoded) {
-        allCountries = (state).listOfCountryModel;
-        return buildLoadedListWidget();
+      if (state is CountryCodeLoded) {
+        listOfCountriesCodeModel = (state).listOfCountryCodeModel;
+        return CustomDropDownCountries(
+            listOfCountriesCodeModel: listOfCountriesCodeModel,
+            title: "Choose a city");
       } else {
-        return Center(
-            child:
-                Lottie.asset(AppImageAssets.loading, width: 200, height: 200));
+        return CustomDropDownCountries(
+            listOfCountriesCodeModel: listOfCountriesCodeModel,
+            title: "Choose a city Loading");
       }
     });
   }
 
-  buildLoadedListWidget() {
-    return SingleChildScrollView(
+  _buildDataList() {
+    return Expanded(
+      flex: 3,
       child: Container(
-        height: MediaQuery.of(context).size.height,
-        child: buildCountryList(),
+          color: AppColor.backgroundColor,
+          child: BlocBuilder<CountryCubit, CountryState>(
+              builder: (context, state) {
+            if (state is SearchHolidaysLoded) {
+              // code = (state).code;
+              // year = (state).year;
+              listOfCountryModel =
+                  BlocProvider.of<CountryCubit>(context).getList();
+              return listOfCountryModel.isEmpty
+                  ? Lottie.asset(AppImageAssets.nodata)
+                  : HolidaysPage(
+                      listOfCountryModel: listOfCountryModel,
+                    );
+            } else {
+              listOfCountryModel =
+                  BlocProvider.of<CountryCubit>(context).getList();
+              return HolidaysPage(
+                listOfCountryModel: listOfCountryModel,
+              );
+            }
+          })),
+    );
+  }
+
+  _buildDropDownBody() {
+    return Expanded(
+      flex: 1,
+      child: Column(
+        children: [
+          _buildDropDownList(),
+          const SizedBox(
+            height: 5,
+          ),
+          const CustomDropDownYears()
+        ],
       ),
     );
   }
 
-  Widget buildCountryList() {
-    return ListView.builder(
-        itemCount: allCountries.length,
-        itemBuilder: (context, index) =>
-            CustomCard(countryModel: allCountries[index]));
+  _buildHomeBody() {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      child: Stack(
+        alignment: AlignmentDirectional.bottomCenter,
+        children: [
+          const CustomBackgroundHomePage(),
+          const CustomCircle(),
+          Container(
+            margin: const EdgeInsets.only(top: 40),
+            height: MediaQuery.of(context).size.height,
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                const CustomText(),
+                _buildDropDownBody(),
+                _buildDataList()
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

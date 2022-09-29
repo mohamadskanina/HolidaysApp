@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/presentation/screen/splashscreen.dart';
 import 'package:myapp/router_page.dart';
 
 void main() {

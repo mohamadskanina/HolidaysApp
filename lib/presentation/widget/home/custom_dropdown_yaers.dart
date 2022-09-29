@@ -1,45 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myapp/core/constant/colorapp.dart';
-import 'package:myapp/core/constant/textstyleapp.dart';
+import 'package:myapp/core/constant/yaers.dart';
 
 import '../../../business_logic/cubit/country_cubit.dart';
-import '../../../data/models/countrycodemodel.dart';
+import '../../../core/constant/colorapp.dart';
+import '../../../core/constant/textstyleapp.dart';
 
-// ignore: must_be_immutable
-class CustomDropDownCountries extends StatefulWidget {
-  List<CountriesCodeModel> listOfCountriesCodeModel;
-  String title;
-  CustomDropDownCountries(
-      {Key? key, required this.listOfCountriesCodeModel, required this.title})
-      : super(key: key);
+class CustomDropDownYears extends StatefulWidget {
+  const CustomDropDownYears({Key? key}) : super(key: key);
 
   @override
-  State<CustomDropDownCountries> createState() =>
-      _CustomDropDownCountriesState();
+  State<CustomDropDownYears> createState() => _CustomDropDownYearsState();
 }
 
-class _CustomDropDownCountriesState extends State<CustomDropDownCountries> {
-  String? code;
+class _CustomDropDownYearsState extends State<CustomDropDownYears> {
+  String? val = AppYear.listOfYears.first;
   @override
   Widget build(BuildContext context) {
     return Container(
         alignment: Alignment.center,
         height: 50,
         decoration: BoxDecoration(
-          color: AppColor.backgroundColor,
-          borderRadius: BorderRadius.circular(20),
-        ),
+            color: AppColor.backgroundColor,
+            borderRadius: BorderRadius.circular(20)),
         padding: const EdgeInsets.symmetric(horizontal: 20),
         margin: const EdgeInsets.all(8.0),
-        child: _buildDropDownCountries());
+        child: _buildDropDownYears());
   }
 
-  _buildDropDownCountries() {
+  _buildDropDownYears() {
     return DropdownButton<String>(
       dropdownColor: AppColor.backgroundColor,
       hint: Text(
-        widget.title,
+        "Chosse Year",
         style: AppTextStyle.smallFont,
       ),
       autofocus: true,
@@ -51,21 +44,21 @@ class _CustomDropDownCountriesState extends State<CustomDropDownCountries> {
       ),
       borderRadius: BorderRadius.circular(20),
       iconEnabledColor: AppColor.primaryColor,
-      value: code,
-      onChanged: (newval) {
+      value: val,
+      onChanged: (year) {
         setState(() {
-          code = newval;
+          val = year;
         });
-        BlocProvider.of<CountryCubit>(context).setCodeValue(code!);
+        BlocProvider.of<CountryCubit>(context).setYearValue(year!);
       },
       elevation: 4,
-      items: widget.listOfCountriesCodeModel.map((e) {
+      items: AppYear.listOfYears.map((e) {
         return DropdownMenuItem<String>(
-          value: e.countryShortName,
+          value: e,
           child: Container(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              e.countryName!,
+              e,
               textAlign: TextAlign.right,
             ),
           ),

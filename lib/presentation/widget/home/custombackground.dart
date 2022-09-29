@@ -1,28 +1,31 @@
 import 'package:flutter/material.dart';
 import '../../../core/constant/colorapp.dart';
 
-class CustomBackground extends StatelessWidget {
-  const CustomBackground({Key? key}) : super(key: key);
+class CustomBackgroundHomePage extends StatelessWidget {
+  const CustomBackgroundHomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-            flex: 3,
-            child: Container(
-              decoration: BoxDecoration(
-                  color: AppColor.primaryColor,
-                  borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20))),
-            )),
-        Expanded(
-            flex: 4,
-            child: Container(
-              color: AppColor.backgroundColor,
-            )),
-      ],
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      color: AppColor.backgroundColor,
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                color: AppColor.primaryColor,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(25),
+                  bottomRight: Radius.circular(25),
+                )),
+            height: MediaQuery.of(context).size.height / 2.1,
+          ),
+          Container(
+            height: MediaQuery.of(context).size.height / 7.9,
+            color: AppColor.backgroundColor,
+          ),
+        ],
+      ),
     );
   }
 }
